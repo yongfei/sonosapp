@@ -7,7 +7,6 @@ import os
 
 import requests
 from flask import Flask, render_template, url_for
-from flask_autoindex import AutoIndex
 from flask import send_file
 from flask import abort
 
@@ -19,7 +18,6 @@ app.config.from_pyfile("settings.py")
 
 sonos = SoCo(app.config["SPEAKER_IP"])
 
-#files_index = AutoIndex(app, browse_root='music/', add_url_rules=False)
 
 def gen_sig():
     return hashlib.md5(
@@ -97,14 +95,6 @@ def dir_listing(req_path):
 def play():
     sonos.play()
     return "Ok"
-
-"""
-@app.route("/music")
-@app.route("/music/")
-@app.route('/music/<path:path>')
-def autoindex(path='.'):
-    return files_index.render_autoindex(path, template='template.html')
-"""
 
 @app.route("/pause")
 def pause():
