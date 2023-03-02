@@ -1,0 +1,18 @@
+# mytemplate.html
+{% extends '__autoindex__/autoindex.html' %}
+
+{% block meta %}
+  {{ super() }}
+  <link rel="stylesheet"
+    href="{{ url_for('static', filename='main.css') }}" />
+    <!-- Here you can specify your own .css -->
+{% endblock %}
+
+{% block header %}
+  <div style="width: 500px; margin: 30px auto;">
+    <h2>All the music for sonos</h2>
+{% endblock %}
+
+{% block footer %}
+  </div>
+{% endblock %}
