@@ -6,14 +6,13 @@
         <meta charset="utf-8">
         <title>Music for yan's home</title>
 	<center>
-        <h1>Music for yan's home</h1>
+        <h1>家庭音乐总站</h1>
 	</center>
 
     </head>
-<center>
-<table>
-	<h1>{{request.path}}</h1>
 	{% if request.path == '/' %}
+		<center>
+		<table>
 		{% for i in range(files|length)%}
 		{%  if i%2 ==0 %}
 			<tr>
@@ -27,15 +26,19 @@
 			</tr>
 		{% endif %}
     		{% endfor %}
+		</table>
+		</center>
 	{% else %}
+	<center><h1>{{request.path.lstrip('/')}}</h1></center>
+		<ul>
 		{% for i in range(files|length)%}
-		<tr><th>
-       		 <a href="{{ (request.path + '/' if request.path != '/' else '') + files[i] }}">
-            	{{ (request.path + '/' if request.path != '/' else '') + files[i] }}
-		</th></tr>
+		<li> <a href="{{ (request.path + '/' if request.path != '/' else '') + files[i] }}">
+				{{ (request.path + '/' if request.path != '/' else '') + files[i] }} </li>
+        		</a>
     		{% endfor %}
+		</ul>
+		<center><h2><a href="http://192.168.68.128:8080">back to home</h2></center>
 	{% endif %}
 
 </table>
-</center>
 </html>
