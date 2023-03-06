@@ -6,7 +6,7 @@ import json
 import os
 
 import requests
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, redirect
 from flask import send_file
 from flask import abort
 
@@ -44,11 +44,12 @@ def dir_listing(req_path):
         uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path)
         print(uri)
         sonos.play_uri(uri)
-        return "Ok"
+        return redirect('http://192.168.68.128:8080/'+req_path.rsplit('/',1)[0])
 
 
     # Show directory contents
     files = os.listdir(abs_path)
+    counter = 0
     return render_template('files.html', files=files)
 
 
