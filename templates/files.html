@@ -1,9 +1,41 @@
-<ul>
-    {% for file in files %}
-    <li>
-        <a href="{{ (request.path + '/' if request.path != '/' else '') + file }}">
-            {{ (request.path + '/' if request.path != '/' else '') + file }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <title>Music for yan's home</title>
+	<center>
+        <h1>Music for yan's home</h1>
+	</center>
+
+    </head>
+<center>
+<table>
+	<h1>{{request.path}}</h1>
+	{% if request.path == '/' %}
+		{% for i in range(files|length)%}
+		{%  if i%2 ==0 %}
+			<tr>
+		{% endif %}
+	    	<th>
+        	<a href="{{ (request.path + '/' if request.path != '/' else '') + files[i] }}">
+            	{{ (request.path + '/' if request.path != '/' else '') + files[i] }}
+        	</a>
+    		</th>
+		{%  if i%2 ==1 %}
+			</tr>
+		{% endif %}
+    		{% endfor %}
+	{% else %}
+		{% for i in range(files|length)%}
+		<tr><th>
+       		 <a href="{{ (request.path + '/' if request.path != '/' else '') + files[i] }}">
+            	{{ (request.path + '/' if request.path != '/' else '') + files[i] }}
+		</th></tr>
+    		{% endfor %}
+	{% endif %}
+
+</table>
+</center>
+</html>
