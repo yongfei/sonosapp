@@ -18,6 +18,30 @@ app.config.from_pyfile("settings.py")
 
 sonos = SoCo(app.config["SPEAKER_IP"])
 
+host = "192.1668.68.128"
+port = 8080
+musicHome = "http://192.168.68.128:8080/"
+
+@app.route("/play")
+def play():
+    sonos.play()
+    return redirect(musicHome)
+
+
+@app.route("/pause")
+def pause():
+    sonos.pause()
+    return redirect(musicHome)
+
+@app.route("/volup")
+def volup():
+    sonos.volume = sonos.volume + 5
+    return redirect(musicHome)
+
+@app.route("/voldown")
+def voldown():
+    sonos.volume = sonos.volume - 5
+    return redirect(musicHome)
 
 #@app.route("/")
 @app.route('/', defaults={'req_path': ''})
@@ -44,7 +68,7 @@ def dir_listing(req_path):
         uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path)
         print(uri)
         sonos.play_uri(uri)
-        return redirect('http://192.168.68.128:8080/'+req_path.rsplit('/',1)[0])
+        return redirect(musicHome+req_path.rsplit('/',1)[0])
 
 
     # Show directory contents
@@ -54,4 +78,4 @@ def dir_listing(req_path):
 
 
 if __name__ == "__main__":
-    app.run(host='192.168.68.128', port=8080,debug=True)
+    app.run(host="192.168.68.128", port=8080,debug=True)
