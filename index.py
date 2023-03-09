@@ -9,6 +9,7 @@ import requests
 from flask import Flask, render_template, url_for, redirect
 from flask import send_file
 from flask import abort
+import xml.etree.ElementTree as ET
 
 from soco import SoCo
 
@@ -21,6 +22,7 @@ sonos = SoCo(app.config["SPEAKER_IP"])
 host = "192.1668.68.128"
 port = 8080
 musicHome = "http://192.168.68.128:8080/"
+music_title=""
 
 @app.route("/play")
 def play():
@@ -42,6 +44,19 @@ def volup():
 def voldown():
     sonos.volume = sonos.volume - 5
     return redirect(musicHome)
+
+
+@app.context_processor
+def inject_title():
+    sonosinfo=sonos.get_current_track_info()
+    root=ET.fromstring(sonosinfo['metadata'])
+    #root = tree.getroot()
+    music_title = root[0][2].text
+    return{'title': music_title}
+
+@app.context_processor
+def inject_volume():
+    return{'volume': str(sonos.volume)}
 
 #@app.route("/")
 @app.route('/', defaults={'req_path': ''})
