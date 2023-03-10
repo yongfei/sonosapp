@@ -4,6 +4,7 @@ import hashlib
 import urllib
 import json
 import os
+import soco
 
 import requests
 from flask import Flask, render_template, url_for, redirect
@@ -44,6 +45,18 @@ def volup():
 def voldown():
     sonos.volume = sonos.volume - 5
     return redirect(musicHome)
+
+@app.route("/deviceInfo")
+def deviceInfo():
+    dinfo={}
+    dvc = []
+    devices = {device.player_name: device for device in soco.discover()}
+    for dname in devices.keys():
+        dinfo[dname]=[]
+        dinfo[dname].append(devices[dname].ip_address)
+        dinfo[dname].append(str(devices[dname].volume))
+    #return dinfo
+    return render_template('devices.html', devices=dinfo)
 
 
 @app.context_processor
