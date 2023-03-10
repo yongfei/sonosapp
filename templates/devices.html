@@ -20,7 +20,11 @@
 	<table>
 		{% for dname in devices.keys() %}
 		<tr>
-		<th>
+			<th><h2><a href="/voldown?devName={{ dname }}"><img src="static/img/down.png"width="80" height="80"></a></h2></th>
+			<th><h2><a href="/pause?devName={{ dname }}"><img src="static/img/pause.png"width="80" height="80"></a></h2></th>
+			<th><h2><a href="/play?devName={{ dname }}"><img src="static/img/play.png"width="80" height="80"></a></h2></th>
+			<th><h2><a href="/volup?devName={{ dname }}"><img src="static/img/up.png"width="80" height="80"></a></h2></th>
+			<th>
             	{{ dname + ' ip address: ' +devices[dname][0] +  ' volume:'+ devices[dname][1] }}
 		</th>
 		</tr>
