@@ -29,27 +29,39 @@ music_title=""
 
 @app.route("/play")
 def play():
-    sonos.play()
-    return redirect(musicHome)
+    devName = request.args.get('devName')
+    if devName and not devName.isspace():
+        devices[devName].play()
+    else:
+        sonos.play()
+    return redirect(request.referrer)
 
 
 @app.route("/pause")
 def pause():
     devName = request.args.get('devName')
-    devices[devName].pause()
+    if devName and not devName.isspace():
+        devices[devName].pause()
+    else:
+        sonos.pause()
     return redirect(request.referrer)
 
 @app.route('/volup')
 def volup():
     devName = request.args.get('devName')
-    print(devName)
-    devices[devName].volume += 5
+    if devName and not devName.isspace():
+        devices[devName].volume += 5
+    else:
+        sonos.volume +=5
     return redirect(request.referrer)
 
 @app.route("/voldown")
 def voldown():
     devName = request.args.get('devName')
-    devices[devName].volume -= 5
+    if devName and not devName.isspace():
+        devices[devName].volume -= 5
+    else:
+        sonos.volume -=5
     return redirect(request.referrer)
 
 @app.route("/deviceInfo")
@@ -60,6 +72,7 @@ def deviceInfo():
         dinfo[dname]=[]
         dinfo[dname].append(devices[dname].ip_address)
         dinfo[dname].append(str(devices[dname].volume))
+        dinfo[dname].append(devices[dname].is_coordinator)
     #return dinfo
     return render_template('devices.html', devices=dinfo)
 
@@ -75,6 +88,10 @@ def inject_title():
 @app.context_processor
 def inject_volume():
     return{'volume': str(sonos.volume)}
+
+@app.context_processor
+def inject_musicHome():
+    return{'musicHome': musicHome}
 
 #@app.route("/")
 @app.route('/', defaults={'req_path': ''})
