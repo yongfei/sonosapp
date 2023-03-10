@@ -8,6 +8,7 @@ import soco
 
 import requests
 from flask import Flask, render_template, url_for, redirect
+from flask import request
 from flask import send_file
 from flask import abort
 import xml.etree.ElementTree as ET
@@ -19,6 +20,7 @@ app = Flask(__name__)
 app.config.from_pyfile("settings.py")
 
 sonos = SoCo(app.config["SPEAKER_IP"])
+devices = {device.player_name: device for device in soco.discover()}
 
 host = "192.1668.68.128"
 port = 8080
@@ -33,24 +35,27 @@ def play():
 
 @app.route("/pause")
 def pause():
-    sonos.pause()
-    return redirect(musicHome)
+    devName = request.args.get('devName')
+    devices[devName].pause()
+    return redirect(request.referrer)
 
-@app.route("/volup")
+@app.route('/volup')
 def volup():
-    sonos.volume = sonos.volume + 5
-    return redirect(musicHome)
+    devName = request.args.get('devName')
+    print(devName)
+    devices[devName].volume += 5
+    return redirect(request.referrer)
 
 @app.route("/voldown")
 def voldown():
-    sonos.volume = sonos.volume - 5
-    return redirect(musicHome)
+    devName = request.args.get('devName')
+    devices[devName].volume -= 5
+    return redirect(request.referrer)
 
 @app.route("/deviceInfo")
 def deviceInfo():
     dinfo={}
     dvc = []
-    devices = {device.player_name: device for device in soco.discover()}
     for dname in devices.keys():
         dinfo[dname]=[]
         dinfo[dname].append(devices[dname].ip_address)
