@@ -51,12 +51,18 @@ tr:nth-child(odd) {
         		</a>
 		</li>
 		{% else: %}
+		{% if ".mp3" in files[i] %}
 		<h3>
             	{{ (request.path + '/' if request.path != '/' else '') + files[i] }}
 		</h3>
 		<audio controls>
 		<source src="{{ 'http://192.168.68.128:8081'+(request.path + '/' if request.path != '/' else '') + files[i] }}" type="audio/mpeg">
 		</audio>
+		{% else: %}
+		<li><a href="{{ (request.path + '/' if request.path != '/' else '') + files[i] +'?player='+(player if player else 'sonos') }}">
+				{{ (request.path + '/' if request.path != '/' else '') + files[i] }}
+        		</a>
+		{% endif %}
 		{% endif %}
     		{% endfor %}
 		</ul>
