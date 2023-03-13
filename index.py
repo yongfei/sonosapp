@@ -124,7 +124,7 @@ def dir_listing(req_path):
     # Show directory contents
     files = os.listdir(abs_path)
     counter = 0
-    return render_template('files.html', files=files)
+    return render_template('files.html', files=files, player=request.args.get('player'))
 
 
 if __name__ == "__main__":
