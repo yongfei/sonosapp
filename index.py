@@ -98,6 +98,7 @@ def inject_musicHome():
 @app.route('/<path:req_path>')
 def dir_listing(req_path):
     BASE_DIR = '/home/john/Downloads/music'
+    player=request.args.get('player')
 
     # Joining the base and the requested path
     abs_path = os.path.join(BASE_DIR, req_path)
@@ -117,14 +118,14 @@ def dir_listing(req_path):
         print(uri_path)
         uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path)
         print(uri)
-        sonos.play_uri(uri)
+        if player != 'local':  sonos.play_uri(uri)
         return redirect(musicHome+req_path.rsplit('/',1)[0])
 
 
     # Show directory contents
     files = os.listdir(abs_path)
     counter = 0
-    return render_template('files.html', files=files, player=request.args.get('player'))
+    return render_template('files.html', files=files, player=player)
 
 
 if __name__ == "__main__":
