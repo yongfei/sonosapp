@@ -135,9 +135,9 @@ def dir_listing(req_path):
 
     # Show directory contents
     files = os.listdir(abs_path)
-    started =  request.args.get('started')
-    print(started)
-    if not started or started != "true":
+    playfolder =  request.args.get('playfolder')
+    print(playfolder)
+    if playfolder and playfolder == "true":
         sonos.clear_queue()
         for file in files:
             if ".mp3" in file or ".wav" in file:
@@ -145,6 +145,7 @@ def dir_listing(req_path):
                 uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path+'/'+file)
                 sonos.add_uri_to_queue(uri)
         print("queue size: " +str(sonos.queue_size))
+        sonos.play_from_queue(1)
     return render_template('files.html', files=files, player=player, qsize=sonos.queue_size)
 
 
