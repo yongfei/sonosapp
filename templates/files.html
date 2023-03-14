@@ -45,7 +45,7 @@ tr:nth-child(odd) {
 	<center>
 		<h1>{{request.path.lstrip('/') +" playing at " + (player if player else 'sonos')}}</h1>
 		{% if qsize > 1 %}
-		<h2>	<a href="/play_queue"> Play the whole folder </a>
+		<h2>	<a href="{{ request.path }}?playfolder=true"> Play the whole folder </a>
 		</h2>
 		{% endif %}
 	</center>
