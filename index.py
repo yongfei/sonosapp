@@ -35,7 +35,7 @@ def play():
         devices[devName].play()
     else:
         sonos.play()
-    return redirect(request.referrer)
+    return redirect(request.referrer.replace("playfoler=true", ""))
 
 @app.route("/play_queue")
 def play_queue():
@@ -62,7 +62,7 @@ def volup():
         devices[devName].volume += 5
     else:
         sonos.volume +=5
-    return redirect(request.referrer)
+    return redirect(request.referrer.replace("playfolder=true", ""))
 
 @app.route("/voldown")
 def voldown():
@@ -71,7 +71,7 @@ def voldown():
         devices[devName].volume -= 5
     else:
         sonos.volume -=5
-    return redirect(request.referrer)
+    return redirect(request.referrer.replace("playfolder=true", ""))
 
 @app.route("/deviceInfo")
 def deviceInfo():
@@ -146,7 +146,8 @@ def dir_listing(req_path):
                 uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path+'/'+file)
                 sonos.add_uri_to_queue(uri)
         print("queue size: " +str(sonos.queue_size))
-        sonos.play_from_queue(1)
+        if sonos.queue_size>0:
+            sonos.play_from_queue(1)
 
     return render_template('files.html', files=files, player=player, qsize=sonos.queue_size)
 
