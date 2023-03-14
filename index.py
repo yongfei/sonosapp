@@ -36,6 +36,14 @@ def play():
         sonos.play()
     return redirect(request.referrer)
 
+@app.route("/play_queue")
+def play_queue():
+    devName = request.args.get('devName')
+    if devName and not devName.isspace():
+        devices[devName].play_from_queue(1)
+    else:
+        sonos.play_from_queue(1)
+    return redirect(request.referrer+"?started=true")
 
 @app.route("/pause")
 def pause():
@@ -80,9 +88,12 @@ def deviceInfo():
 @app.context_processor
 def inject_title():
     sonosinfo=sonos.get_current_track_info()
-    root=ET.fromstring(sonosinfo['metadata'])
+    try:
+        root=ET.fromstring(sonosinfo['metadata'])
+        music_title = root[0][2].text
+    except:
+        music_title = "Not playing"
     #root = tree.getroot()
-    music_title = root[0][2].text
     return{'title': music_title}
 
 @app.context_processor
@@ -124,8 +135,17 @@ def dir_listing(req_path):
 
     # Show directory contents
     files = os.listdir(abs_path)
-    counter = 0
-    return render_template('files.html', files=files, player=player)
+    started =  request.args.get('started')
+    print(started)
+    if not started or started != "true":
+        sonos.clear_queue()
+        for file in files:
+            if ".mp3" in file or ".wav" in file:
+                uri_path=req_path.replace('//','/')
+                uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path+'/'+file)
+                sonos.add_uri_to_queue(uri)
+        print("queue size: " +str(sonos.queue_size))
+    return render_template('files.html', files=files, player=player, qsize=sonos.queue_size)
 
 
 if __name__ == "__main__":
