@@ -14,12 +14,13 @@ from flask import abort
 import xml.etree.ElementTree as ET
 
 from soco import SoCo
+from soco.discovery import by_name
 
 app = Flask(__name__)
 
 app.config.from_pyfile("settings.py")
 
-sonos = SoCo(app.config["SPEAKER_IP"])
+sonos = by_name(app.config["SPEAKER_NAME"])
 devices = {device.player_name: device for device in soco.discover()}
 
 host = "192.1668.68.128"
@@ -146,6 +147,7 @@ def dir_listing(req_path):
                 sonos.add_uri_to_queue(uri)
         print("queue size: " +str(sonos.queue_size))
         sonos.play_from_queue(1)
+
     return render_template('files.html', files=files, player=player, qsize=sonos.queue_size)
 
 
