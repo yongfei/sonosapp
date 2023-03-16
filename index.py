@@ -23,7 +23,7 @@ app.config.from_pyfile("settings.py")
 sonos = by_name(app.config["SPEAKER_NAME"])
 devices = {device.player_name: device for device in soco.discover()}
 
-host = "192.1668.68.128"
+host = "192.168.68.128"
 port = 8080
 musicHome = "http://192.168.68.128:8080/"
 music_title=""
@@ -90,12 +90,18 @@ def deviceInfo():
 def inject_title():
     sonosinfo=sonos.get_current_track_info()
     try:
+        music_length = sonosinfo['duration']
+        music_pos = sonosinfo['position']
+    except:
+        music_length="not availabe"
+        music_pos="not known"
+    try:
         root=ET.fromstring(sonosinfo['metadata'])
         music_title = root[0][2].text
     except:
         music_title = "Not playing"
     #root = tree.getroot()
-    return{'title': music_title}
+    return{'title': music_title + " duration: "+music_length+" playing at: " + music_pos}
 
 @app.context_processor
 def inject_volume():
@@ -115,6 +121,7 @@ def dir_listing(req_path):
     # Joining the base and the requested path
     abs_path = os.path.join(BASE_DIR, req_path)
     print(abs_path)
+    uri_path=req_path.replace('//','/')
 
     # Return 404 if path doesn't exist
     if not os.path.exists(abs_path):
@@ -126,7 +133,6 @@ def dir_listing(req_path):
         #return send_file(abs_path)
         #uri='http://192.168.68.128:8081/'+abs_path.lstrip('./music/')
         #uri_path=abs_path.lstrip(BASE_DIR).replace('//','/')
-        uri_path=req_path.replace('//','/')
         print(uri_path)
         uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path)
         print(uri)
@@ -142,14 +148,13 @@ def dir_listing(req_path):
         sonos.clear_queue()
         for file in files:
             if ".mp3" in file or ".wav" in file:
-                uri_path=req_path.replace('//','/')
                 uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path+'/'+file)
                 sonos.add_uri_to_queue(uri)
         print("queue size: " +str(sonos.queue_size))
         if sonos.queue_size>0:
-            sonos.play_from_queue(1)
-
-    return render_template('files.html', files=files, player=player, qsize=sonos.queue_size)
+            sonos.play_from_queue(0)
+    buri = musicHome+uri_path;
+    return render_template('files.html', files=files, player=player, qsize=sonos.queue_size,buri=buri.rsplit('/',1)[0])
 
 
 if __name__ == "__main__":
