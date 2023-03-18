@@ -13,12 +13,22 @@ tr:nth-child(odd) {
 	<center>
         <h1>家庭音乐总站</h1>
 	<table><tr>
-			<th><h2><a href="/voldown"><img src="/static/img/down.png"width="80" height="80"></a></h2></th>
-			<th><h2><a href="/pause"><img src="/static/img/pause.png"width="80" height="80"></a></h2></th>
-			<th><h2><a href="/play"><img src="/static/img/play.png"width="80" height="80"></a></h2></th>
-			<th><h2><a href="/volup"><img src="/static/img/up.png"width="80" height="80"></a></h2></th>
-			<th><h2><a href="/deviceInfo"><img src="/static/img/speaker.jpg"width="80" height="80"></a></h2></th>
-	</tr></table>
+			<th><h2><a href="/voldown"><img src="/static/img/down.png"width="60" height="60"></a></h2></th>
+			<th><h2><a href="/pause"><img src="/static/img/pause.png"width="60" height="60"></a></h2></th>
+			<th><h2><a href="/play"><img src="/static/img/play.png"width="60" height="60"></a></h2></th>
+			<th><h2><a href="/next"><img src="/static/img/next.png"width="60" height="60"></a></h2></th>
+			<th><h2><a href="/volup"><img src="/static/img/up.png"width="60" height="60"></a></h2></th>
+			<th><h2><a href="/deviceInfo"><img src="/static/img/speaker.jpg"width="60" height="60"></a></h2></th>
+	</tr>
+	<tr>
+		<th><a href="{{ buri + '?player='+(player if player else 'sonos') }}"><img src="/static/img/back.png"width="60" height="60"></a></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th><a href="{{ musicHome + '?player='+(player if player else 'sonos') }}"><img src="/static/img/home.png"width="60" height="60"></a></th>
+	</tr>
+	</table>
 	</center>
 
     </head>
@@ -39,7 +49,7 @@ tr:nth-child(odd) {
 		{% endif %}
     		{% endfor %}
 		</table>
-		<h3>{{ 'playing: '+ title + ' at: ' + volume }} </h3>
+		<h3>{{ title + ' Vol: ' + volume }} </h3>
 		</center>
 	{% else %}
 	<center>
@@ -70,9 +80,9 @@ tr:nth-child(odd) {
 		{% endif %}
     		{% endfor %}
 		</ul>
-		<h3>{{ 'playing: '+ title + ' at: ' + volume }} </h3>
-		<a href="{{ buri + '?player='+(player if player else 'sonos') }}"><img src="/static/img/back.png"width="80" height="80"></a>
-		<a href="{{ musicHome + '?player='+(player if player else 'sonos') }}"><img src="/static/img/home.png"width="80" height="80"></a>
+		<center>
+		<h3>{{ title + ' Vol: ' + volume }} </h3>
+		</center>
 	{% endif %}
 
 </table>
