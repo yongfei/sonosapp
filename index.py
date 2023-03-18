@@ -7,10 +7,8 @@ import os
 import soco
 
 import requests
-from flask import Flask, render_template, url_for, redirect
-from flask import request
-from flask import send_file
-from flask import abort
+from flask import Flask, render_template, request, redirect, abort
+from flask import Flask, render_template, redirect
 import xml.etree.ElementTree as ET
 
 from soco import SoCo
@@ -21,12 +19,13 @@ app = Flask(__name__)
 app.config.from_pyfile("settings.py")
 
 sonos = by_name(app.config["SPEAKER_NAME"])
+BASE_DIR = app.config["BASE_DIR"]
+print("playing music at : " + BASE_DIR)
 devices = {device.player_name: device for device in soco.discover()}
 
 host = "192.168.68.128"
 port = 8080
 musicHome = "http://192.168.68.128:8080/"
-music_title=""
 
 @app.route("/play")
 def play():
@@ -35,6 +34,15 @@ def play():
         devices[devName].play()
     else:
         sonos.play()
+    return redirect(request.referrer.replace("playfoler=true", ""))
+
+@app.route("/next")
+def next():
+    devName = request.args.get('devName')
+    if devName and not devName.isspace():
+        devices[devName].next()
+    else:
+        sonos.next()
     return redirect(request.referrer.replace("playfoler=true", ""))
 
 @app.route("/play_queue")
@@ -89,6 +97,8 @@ def deviceInfo():
 @app.context_processor
 def inject_title():
     sonosinfo=sonos.get_current_track_info()
+    root=ET.fromstring(sonosinfo['metadata'])
+    music_title=""
     try:
         music_length = sonosinfo['duration']
         music_pos = sonosinfo['position']
@@ -96,11 +106,15 @@ def inject_title():
         music_length="not availabe"
         music_pos="not known"
     try:
-        root=ET.fromstring(sonosinfo['metadata'])
-        music_title = root[0][2].text
-    except:
-        music_title = "Not playing"
-    #root = tree.getroot()
+        for elem in root.iter():
+            if 'title' in elem.tag:
+                music_title += " Title: "
+                music_title += elem.text
+            if 'creator' in elem.tag:
+                music_title += " Singer: "
+                music_title += elem.text
+    except Exception as e:
+        music_title = "No title info"
     return{'title': music_title + " duration: "+music_length+" playing at: " + music_pos}
 
 @app.context_processor
@@ -115,7 +129,6 @@ def inject_musicHome():
 @app.route('/', defaults={'req_path': ''})
 @app.route('/<path:req_path>')
 def dir_listing(req_path):
-    BASE_DIR = '/home/john/Downloads/music'
     player=request.args.get('player')
 
     # Joining the base and the requested path
@@ -130,9 +143,6 @@ def dir_listing(req_path):
     # Check if path is a file and serve
     if os.path.isfile(abs_path):
 
-        #return send_file(abs_path)
-        #uri='http://192.168.68.128:8081/'+abs_path.lstrip('./music/')
-        #uri_path=abs_path.lstrip(BASE_DIR).replace('//','/')
         print(uri_path)
         uri='http://192.168.68.128:8081/'+urllib.parse.quote(uri_path)
         print(uri)
