@@ -8,17 +8,16 @@ import soco
 
 import requests
 from flask import Flask, render_template, request, redirect, abort
-from flask import Flask, render_template, redirect
 import xml.etree.ElementTree as ET
 
-from soco import SoCo
 from soco.discovery import by_name
 
 app = Flask(__name__)
 
 app.config.from_pyfile("settings.py")
 
-sonos = by_name(app.config["SPEAKER_NAME"])
+adevice =soco.discovery.any_soco()
+sonos=adevice.group.coordinator
 BASE_DIR = app.config["BASE_DIR"]
 print("playing music at : " + BASE_DIR)
 devices = {device.player_name: device for device in soco.discover()}
@@ -96,6 +95,7 @@ def deviceInfo():
 @app.route("/trackinfo")
 def trackinfo():
     sonosinfo=sonos.get_current_track_info()
+    #print(sonosinfo)
     root=ET.fromstring(sonosinfo['metadata'])
     music_title=""
     try:
