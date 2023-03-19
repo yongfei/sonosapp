@@ -16,8 +16,7 @@ app = Flask(__name__)
 
 app.config.from_pyfile("settings.py")
 
-adevice =soco.discovery.any_soco()
-sonos=adevice.group.coordinator
+sonos =soco.discovery.any_soco().group.coordinator
 BASE_DIR = app.config["BASE_DIR"]
 print("playing music at : " + BASE_DIR)
 devices = {device.player_name: device for device in soco.discover()}
