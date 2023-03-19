@@ -7,6 +7,17 @@ tr:nth-child(odd) {
   background-color: #D6EEEE;
 }
 </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("button").click(function(){
+    $.get("/trackinfo", function(data, status){
+     // alert("Data: " + data + "\nStatus: " + status);
+      document.getElementById("titleinfo").innerHTML=data;
+    });
+  });
+});
+</script>
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta charset="utf-8">
         <title>Music for yan's home</title>
@@ -49,7 +60,6 @@ tr:nth-child(odd) {
 		{% endif %}
     		{% endfor %}
 		</table>
-		<h3>{{ title + ' Vol: ' + volume }} </h3>
 		</center>
 	{% else %}
 	<center>
@@ -80,10 +90,19 @@ tr:nth-child(odd) {
 		{% endif %}
     		{% endfor %}
 		</ul>
-		<center>
-		<h3>{{ title + ' Vol: ' + volume }} </h3>
-		</center>
 	{% endif %}
+		<center>
+		  <h3 id="trackinfo" ></h3>
+		<script>
+			function updateInfo() {
+   				 $.get("/trackinfo", function(data, status){
+      					document.getElementById("trackinfo").innerHTML=data;
+				 })
+			}
+			var i = setInterval(function() { updateInfo(); }, 2000);
+
+		</script>
+		</center>
 
 </table>
 </html>
