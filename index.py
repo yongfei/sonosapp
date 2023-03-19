@@ -93,6 +93,27 @@ def deviceInfo():
     #return dinfo
     return render_template('devices.html', devices=dinfo)
 
+@app.route("/trackinfo")
+def trackinfo():
+    sonosinfo=sonos.get_current_track_info()
+    root=ET.fromstring(sonosinfo['metadata'])
+    music_title=""
+    try:
+        music_length = sonosinfo['duration']
+        music_pos = sonosinfo['position']
+    except:
+        music_length="not availabe"
+        music_pos="not known"
+    try:
+        for elem in root.iter():
+            if 'title' in elem.tag:
+                music_title += elem.text
+            if 'creator' in elem.tag:
+                music_title += elem.text
+    except Exception as e:
+        music_title = ""
+    return music_title + " duration: "+music_length+" playing at: " + music_pos + " volume: " + str(sonos.volume)
+
 
 @app.context_processor
 def inject_title():
@@ -108,13 +129,11 @@ def inject_title():
     try:
         for elem in root.iter():
             if 'title' in elem.tag:
-                music_title += " Title: "
                 music_title += elem.text
             if 'creator' in elem.tag:
-                music_title += " Singer: "
                 music_title += elem.text
     except Exception as e:
-        music_title = "No title info"
+        music_title = ""
     return{'title': music_title + " duration: "+music_length+" playing at: " + music_pos}
 
 @app.context_processor
