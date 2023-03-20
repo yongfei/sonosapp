@@ -7,6 +7,7 @@ tr:nth-child(odd) {
   background-color: #D6EEEE;
 }
 </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta charset="utf-8">
         <title>Music for yan's home</title>
@@ -37,7 +38,18 @@ tr:nth-child(odd) {
 		</tr>
     		{% endfor %}
 	</table>
-		<h3>{{ 'playing: '+ title + ' at: ' + volume }} </h3>
+		<center>
+		  <h3 id="trackinfo" ></h3>
+		<script>
+			function updateInfo() {
+   				 $.get("/trackinfo", function(data, status){
+      					document.getElementById("trackinfo").innerHTML=data;
+				 })
+			}
+			var i = setInterval(function() { updateInfo(); }, 2000);
+
+		</script>
+		</center>
 		<center><h2><a href="{{ musicHome }}">back to home</h2></center>
     </center>
 
