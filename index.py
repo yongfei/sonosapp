@@ -111,7 +111,7 @@ def trackinfo():
                 music_title += elem.text
     except Exception as e:
         music_title = ""
-    return music_title + " duration: "+music_length+" playing at: " + music_pos + " volume: " + str(sonos.volume)
+    return music_title + "  "+music_length+" <-> " + music_pos + " volume: " + str(sonos.volume)
 
 
 @app.context_processor
