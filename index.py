@@ -67,7 +67,8 @@ def volup():
     if devName and not devName.isspace():
         devices[devName].volume += 5
     else:
-        sonos.volume +=5
+        for d in devices:
+            devices[d].volume += 5
     return redirect(request.referrer.replace("playfolder=true", ""))
 
 @app.route("/voldown")
@@ -76,7 +77,8 @@ def voldown():
     if devName and not devName.isspace():
         devices[devName].volume -= 5
     else:
-        sonos.volume -=5
+        for d in devices:
+            devices[d].volume -= 5
     return redirect(request.referrer.replace("playfolder=true", ""))
 
 @app.route("/deviceInfo")
