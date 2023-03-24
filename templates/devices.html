@@ -17,28 +17,40 @@ tr:nth-child(odd) {
 
     </head>
     <center> 
+	<table><tr>
+			<th><h2><a href="/voldown"><img src="/static/img/down.png"width="50" height="50"></a></h2></th>
+			<th><h2><a href="/pause"><img src="/static/img/blue-pause.png"width="50" height="50"></a></h2></th>
+			<th><h2><a href="/play"><img src="/static/img/play.png"width="50" height="50"></a></h2></th>
+			<th><h2><a href="/volup"><img src="/static/img/up.png"width="50" height="50"></a></h2></th>
+	</tr>
+	<tr>
+		<th><a href="/next"><img src="/static/img/next.png"width="50" height="50"></a></th>
+		<th></th>
+		<th></th>
+		<th><a href="{{ musicHome + '?player='+(player if player else 'sonos') }}"><img src="/static/img/home.jpg"width="50" height="50"></a></th>
+	</tr>
+	</table>
 	<table>
 		{% for dname in devices.keys() %}
 		<tr>
 			<th>
-				<h2><a href="/voldown?devName={{ dname }}"><img src="static/img/down.png"width="60" height="60"></a></h2>
+				<h2><a href="/voldown?devName={{ dname }}"><img src="static/img/down.png"width="40" height="40"></a></h2>
 			{% if devices[dname][2]: %}
-				<h2><a href="/pause?devName={{ dname }}"><img src="static/img/pause.png"width="60" height="60"></a></h2>
+				<h2><a href="/pause?devName={{ dname }}"><img src="static/img/play-pause.png"width="40" height="40"></a></h2>
 			{% endif %}
 			</th>
 			<th> 
 				<h2>{{ dname + ': '+ devices[dname][1] }}</h2> 
 			</th>
 			<th>
-				<h2><a href="/volup?devName={{ dname }}"><img src="static/img/up.png"width="60" height="60"></a></h2>
+				<h2><a href="/volup?devName={{ dname }}"><img src="static/img/up.png"width="40" height="40"></a></h2>
 			{% if devices[dname][2]: %}
-				<h2><a href="/play?devName={{ dname }}"><img src="static/img/play.png"width="60" height="60"></a></h2>
+				<h2><a href="/play?devName={{ dname }}"><img src="static/img/play.png"width="40" height="40"></a></h2>
 			{% endif %}
 			</th>
 		</tr>
     		{% endfor %}
 	</table>
-		<center>
 		  <h3 id="trackinfo" ></h3>
 		<script>
 			function updateInfo() {
@@ -49,8 +61,6 @@ tr:nth-child(odd) {
 			var i = setInterval(function() { updateInfo(); }, 2000);
 
 		</script>
-		</center>
-		<center><h2><a href="{{ musicHome }}">back to home</h2></center>
     </center>
 
 </html>
