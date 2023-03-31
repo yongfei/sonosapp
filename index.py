@@ -171,7 +171,7 @@ def dir_listing(req_path):
 
 
     # Show directory contents
-    files = os.listdir(abs_path)
+    files = sorted(os.listdir(abs_path))
     playfolder =  request.args.get('playfolder')
     print(playfolder)
     if playfolder and playfolder == "true":
