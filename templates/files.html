@@ -8,16 +8,6 @@ tr:nth-child(odd) {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<script>
-$(document).ready(function(){
-  $("button").click(function(){
-    $.get("/trackinfo", function(data, status){
-     // alert("Data: " + data + "\nStatus: " + status);
-      document.getElementById("titleinfo").innerHTML=data;
-    });
-  });
-});
-</script>
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta charset="utf-8">
         <title>Music for yan's home</title>
@@ -25,25 +15,25 @@ $(document).ready(function(){
         <h1>家庭音乐总站</h1>
 	<table><tr>
 			<th><h2><a href="/voldown"><img src="/static/img/down.png"width="60" height="60"></a></h2></th>
-			<th><h2><a href="/pause"><img src="/static/img/pause.png"width="60" height="60"></a></h2></th>
+			<th><h2><a href="/pause"><img src="/static/img/blue-pause.png"width="60" height="60"></a></h2></th>
 			<th><h2><a href="/play"><img src="/static/img/play.png"width="60" height="60"></a></h2></th>
-			<th><h2><a href="/next"><img src="/static/img/next.png"width="60" height="60"></a></h2></th>
 			<th><h2><a href="/volup"><img src="/static/img/up.png"width="60" height="60"></a></h2></th>
-			<th><h2><a href="/deviceInfo"><img src="/static/img/speaker.jpg"width="60" height="60"></a></h2></th>
 	</tr>
 	<tr>
 		<th><a href="{{ buri + '?player='+(player if player else 'sonos') }}"><img src="/static/img/back.png"width="60" height="60"></a></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th><a href="{{ musicHome + '?player='+(player if player else 'sonos') }}"><img src="/static/img/home.png"width="60" height="60"></a></th>
+		<th><a href="/next"><img src="/static/img/next.png"width="60" height="60"></a></th>
+		<th><a href="/deviceInfo"><img src="/static/img/speaker.jpg"width="60" height="60"></a></th>
+		<th><a href="{{ musicHome + '?player='+(player if player else 'sonos') }}"><img src="/static/img/home.jpg"width="60" height="60"></a></th>
 	</tr>
 	</table>
 	</center>
 
     </head>
-	{% if request.path == '/' %}
+	<center>
+		<h1>{{request.path.lstrip('/') +" playing at " + (player if player else 'sonos')}}</h1>
+		<h2>	<a href="{{ request.path }}?playfolder=true"> Play the whole folder </a> </h2>
+	</center>
+	{% if request.path == '/' or "歌手" in request.path %}
 		<center>
 		<table>
 		{% for i in range(files|length)%}
@@ -52,7 +42,7 @@ $(document).ready(function(){
 		{% endif %}
 	    	<th>
         	<a href="{{ (request.path + '/' if request.path != '/' else '') + files[i] +'?player='+(player if player else 'sonos')}}">
-            	{{ (request.path + '/' if request.path != '/' else '') + files[i] }}
+            	{{ files[i] }}
         	</a>
     		</th>
 		{%  if i%2 ==1 %}
@@ -62,11 +52,6 @@ $(document).ready(function(){
 		</table>
 		</center>
 	{% else %}
-	<center>
-		<h1>{{request.path.lstrip('/') +" playing at " + (player if player else 'sonos')}}</h1>
-		<h2>	<a href="{{ request.path }}?playfolder=true"> Play the whole folder </a>
-		</h2>
-	</center>
 		<ul>
 		{% for i in range(files|length)%}
 		{% if player != "local" %}
@@ -80,7 +65,7 @@ $(document).ready(function(){
             	{{ (request.path + '/' if request.path != '/' else '') + files[i] }}
 		</h3>
 		<audio controls>
-		<source src="{{ 'http://192.168.68.128:8081'+(request.path + '/' if request.path != '/' else '') + files[i] }}" type="audio/mpeg">
+		<source src="{{ streamurl+(request.path + '/' if request.path != '/' else '') + files[i] }}" type="audio/mpeg">
 		</audio>
 		{% else: %}
 		<li><a href="{{ (request.path + '/' if request.path != '/' else '') + files[i] +'?player='+(player if player else 'sonos') }}">
@@ -91,6 +76,7 @@ $(document).ready(function(){
     		{% endfor %}
 		</ul>
 	{% endif %}
+		{% if player != "local" %}
 		<center>
 		  <h3 id="trackinfo" ></h3>
 		<script>
@@ -99,10 +85,11 @@ $(document).ready(function(){
       					document.getElementById("trackinfo").innerHTML=data;
 				 })
 			}
-			var i = setInterval(function() { updateInfo(); }, 2000);
+			var i = setInterval(function() { updateInfo(); }, 5000);
 
 		</script>
 		</center>
+		{% endif %}
 
 </table>
 </html>
