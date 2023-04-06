@@ -10,13 +10,23 @@ import requests
 from flask import Flask, render_template, request, redirect, abort
 import xml.etree.ElementTree as ET
 
-from soco.discovery import by_name
+def set_master(masterName):
+    master = soco.discovery.by_name(masterName)
+    if not master.is_coordinator:
+        master.unjoin()
+    for d in soco.discover():
+        if d != master:
+            d.join(master)
+    return master
 
 app = Flask(__name__)
 
 app.config.from_pyfile("settings.py")
 
-sonos =soco.discovery.any_soco().group.coordinator
+#sonos =soco.discovery.any_soco().group.coordinator
+#make patio speaker the master
+sonos = set_master("Patio")
+
 BASE_DIR = app.config["BASE_DIR"]
 print("playing music at : " + BASE_DIR)
 devices = {device.player_name: device for device in soco.discover()}
@@ -85,7 +95,7 @@ def voldown():
 def deviceInfo():
     dinfo={}
     dvc = []
-    for dname in devices.keys():
+    for dname in sorted(devices.keys(),reverse=True):
         dinfo[dname]=[]
         dinfo[dname].append(devices[dname].ip_address)
         dinfo[dname].append(str(devices[dname].volume))
@@ -97,7 +107,6 @@ def deviceInfo():
 def trackinfo():
     sonosinfo=sonos.get_current_track_info()
     #print(sonosinfo)
-    root=ET.fromstring(sonosinfo['metadata'])
     music_title=""
     try:
         music_length = sonosinfo['duration']
@@ -106,6 +115,7 @@ def trackinfo():
         music_length="not availabe"
         music_pos="not known"
     try:
+        root=ET.fromstring(sonosinfo['metadata'])
         for elem in root.iter():
             if 'title' in elem.tag:
                 music_title += elem.text
@@ -119,7 +129,6 @@ def trackinfo():
 @app.context_processor
 def inject_title():
     sonosinfo=sonos.get_current_track_info()
-    root=ET.fromstring(sonosinfo['metadata'])
     music_title=""
     try:
         music_length = sonosinfo['duration']
@@ -128,6 +137,7 @@ def inject_title():
         music_length="not availabe"
         music_pos="not known"
     try:
+        root=ET.fromstring(sonosinfo['metadata'])
         for elem in root.iter():
             if 'title' in elem.tag:
                 music_title += elem.text
@@ -194,4 +204,4 @@ def dir_listing(req_path):
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.68.128", port=8080,debug=True)
+    app.run(host="192.168.68.128", port=8080,debug=False)
