@@ -8,6 +8,7 @@ import soco
 
 import requests
 from flask import Flask, render_template, request, redirect, abort
+from flask_autoindex import AutoIndex
 import xml.etree.ElementTree as ET
 
 def set_master(masterName):
@@ -22,6 +23,7 @@ def set_master(masterName):
 app = Flask(__name__)
 
 app.config.from_pyfile("settings.py")
+files_index = AutoIndex(app, browse_root='/home/john/Downloads/music/', add_url_rules=False)
 
 #sonos =soco.discovery.any_soco().group.coordinator
 #make patio speaker the master
@@ -34,6 +36,11 @@ devices = {device.player_name: device for device in soco.discover()}
 host = "192.168.68.128"
 port = 8080
 musicHome = "http://192.168.68.128:8080/"
+
+@app.route("/mfiles")
+@app.route('/mfiles/<path:path>')
+def autoindex(path='.'):
+    return files_index.render_autoindex(path, template='template.html')
 
 @app.route("/play")
 def play():
@@ -162,7 +169,7 @@ def dir_listing(req_path):
     player=request.args.get('player')
     rhost = request.host.split(':',1)[0]
     hosturl = 'http://'+rhost+':8080/'
-    streamurl = 'http://'+rhost+':8081/'
+    streamurl = 'http://'+rhost+':8080/mfiles/'
 
     # Joining the base and the requested path
     abs_path = os.path.join(BASE_DIR, req_path)
