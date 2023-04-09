@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+<style>
+tr:nth-child(odd) {
+  background-color: #D6EEEE;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <title>Music for yan's home</title>
+	<center>
+        <h1>Music in Queue</h1>
+	</center>
+
+    </head>
+    <center> 
+	<table><tr>
+			<th><h2><a href="/voldown"><img src="/static/img/down.png"width="50" height="50"></a></h2></th>
+			<th><h2><a href="/pause"><img src="/static/img/blue-pause.png"width="50" height="50"></a></h2></th>
+			<th><h2><a href="/play"><img src="/static/img/play.png"width="50" height="50"></a></h2></th>
+			<th><h2><a href="/volup"><img src="/static/img/up.png"width="50" height="50"></a></h2></th>
+	</tr>
+	<tr>
+		<th><a href="/next"><img src="/static/img/next.png"width="50" height="50"></a></th>
+		<th><a href="/queueInfo"><img src="/static/img/musicqueue.png"width="50" height="50"></a></th>
+		<th></th>
+		<th><a href="{{ musicHome + '?player='+(player if player else 'sonos') }}"><img src="/static/img/home.jpg"width="50" height="50"></a></th>
+	</tr>
+	</table>
+	<table>
+		{% for music in playlist %}
+		<tr>
+		  <th> <h3>{{ music }} </h3> </th>
+		</tr>
+		{% endfor %}
+	</table>
+		  <h3 id="trackinfo" ></h3>
+		<script>
+			function updateInfo() {
+   				 $.get("/trackinfo", function(data, status){
+      					document.getElementById("trackinfo").innerHTML=data;
+				 })
+			}
+			var i = setInterval(function() { updateInfo(); }, 5000);
+
+		</script>
+    </center>
+
+</html>
