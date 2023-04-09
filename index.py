@@ -69,6 +69,17 @@ def play_queue():
         sonos.play_from_queue(1)
     return redirect(request.referrer+"?started=true")
 
+@app.route("/queueInfo")
+def queueInfo():
+    playlist=[]
+    q = sonos.get_queue()
+    for item in q:
+        playlist.append(item.title)
+    #print(playlist)
+    #return tuple(playlist)
+    return render_template('musicinfo.html', playlist=playlist)
+
+
 @app.route("/pause")
 def pause():
     devName = request.args.get('devName')
